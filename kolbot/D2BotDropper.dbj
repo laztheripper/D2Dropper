@@ -17,6 +17,8 @@ var StarterConfig = {
 var usePackets = true, // Set true to drop using packets
 	restartDropper = false; // Set true to restart dropper profile after successful drop, or false to quit to lobby
 
+// test
+
 include("json2.js");
 include("NTItemParser.dbl");
 include("NTItemAlias.dbl");
