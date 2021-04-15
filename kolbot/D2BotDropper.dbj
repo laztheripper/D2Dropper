@@ -17,8 +17,6 @@ var StarterConfig = {
 var usePackets = true, // Set true to drop using packets
 	restartDropper = false; // Set true to restart dropper profile after successful drop, or false to quit to lobby
 
-// test
-
 include("json2.js");
 include("NTItemParser.dbl");
 include("NTItemAlias.dbl");
@@ -38,7 +36,7 @@ include("MuleLogger.js");
 
 load("tools/AreaWatcher.js"); 
 
-var i, gameInfo, ingame, handle, nextJob, lastGameTick, connectFail, lastGameName,
+var i, gameInfo, ingame, handle, nextJob, lastGameTick, connectFail, lastGameName, accFail,
 	gameCount = DataFile.getStats().runs + 1,
 	lastGameStatus = "ready",
 	joinRetry = 0,
@@ -659,6 +657,16 @@ MainSwitch:
 		}
 		break;
 	case 12: // Character Select
+		if (!getControl(4, 626, 100, 151, 44)) { // Single player
+			ControlAction.click(6, 33, 572, 128, 35);
+			break;
+		}
+		
+		if (nextJob && getControl(4, 626, 100, 151, 44).getText().join("").toLowerCase() !== nextJob.realm.toLowerCase()) {
+			D2Bot.printToConsole("Wrong realm login, restarting...");
+			D2Bot.restart();
+		}
+
 		if (!nextJob || (nextJob && nextJob.account !== me.account)) {
 			if (gameInfo.rdBlocker) {
 				D2Bot.restart();
@@ -668,9 +676,20 @@ MainSwitch:
 			break;
 		}
 
+		accFail = false;
+
 		if (ControlAction.findCharacter(nextJob)) {
 			ControlAction.loginCharacter(nextJob);
-		}
+		} else {
+            ItemDB.deleteChar(nextJob);
+            
+			while (!getJobs(nextJob.charName, false, true)) {
+                delay(100);
+            }
+
+            D2Bot.printToConsole("Deleted character: " + nextJob.charName, 8);
+            D2Bot.restart();
+        }
 		break;
 	case 10: // Login Error
 		string = "";
@@ -694,7 +713,24 @@ MainSwitch:
 			case getLocaleString(5208):
 				D2Bot.updateStatus("Invalid Account");
 				D2Bot.printToConsole("Invalid Account");
+				
+				if (!accFail) {
+					accFail = true;
+					ControlAction.click(6, 335, 412, 128, 35); // Dismiss prompt
+					delay(1000);
+					ControlAction.click(6, 33, 572, 128, 35); // Exit to main menu
+					break MainSwitch;
+				}
 
+				ItemDB.deleteAccount(nextJob);
+
+				while (!getJobs(nextJob.charName, false, true)) {
+					delay(100);
+				}
+	
+				D2Bot.printToConsole("Deleted account: " + nextJob.account, 8);
+				D2Bot.restart();
+				
 				break;
 			case getLocaleString(5202): // cd key intended for another product
 			case getLocaleString(10915): // lod key intended for another product

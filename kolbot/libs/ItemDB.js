@@ -74,19 +74,49 @@ var ItemDB = {
 		return success;			
 	},
 	
-	deleteChar: function(a) {
-		var success = true;
+	deleteAccount: function(info) {
+		var realmId = ["uswest","useast","asia","europe"].indexOf(info.realm.toLowerCase()),
+			success = true;
+
 		try {
-			this.DBConnect	= new SQLite(this.DB, true);
+			this.DBConnect = new SQLite(this.DB, true);
 			this.DBConnect.execute("BEGIN TRANSACTION;");
-			this.DBConnect.execute("DELETE FROM muleChars WHERE charName = '" + a + "';")
+			this.DBConnect.execute("DELETE FROM muleAccounts WHERE accountLogin = '" + info.account + "' AND accountRealm = '" + realmId + "';");
 			this.DBConnect.execute("COMMIT;");			
 		} catch (e) { 
 			success = false;
 			this.log(e);
 		} finally {
 			this.DBConnect.close();
-		}		
+		}
+
+		return success;			
+	},
+
+	deleteChar: function(info) {
+		var realmId = ["uswest","useast","asia","europe"].indexOf(info.realm.toLowerCase()),
+			success = true;
+
+		try {
+			this.DBConnect = new SQLite(this.DB, true);
+
+			this.DBConnect.execute("BEGIN TRANSACTION;");
+			this.DBConnect.execute(
+				"DELETE FROM muleChars WHERE charId IN (" +
+					"SELECT charId FROM muleChars" +
+					"LEFT JOIN muleAccounts ON charAccountId = accountId" +
+					"WHERE charName = '" + info.charName + "' AND accountRealm = '" + realmId + "'" +
+				");"
+			);
+
+			this.DBConnect.execute("COMMIT;");			
+		} catch (e) { 
+			success = false;
+			this.log(e);
+		} finally {
+			this.DBConnect.close();
+		}
+
 		return success;		
 	},
 	
