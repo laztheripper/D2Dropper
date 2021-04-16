@@ -103,8 +103,8 @@ var ItemDB = {
 			this.DBConnect.execute("BEGIN TRANSACTION;");
 			this.DBConnect.execute(
 				"DELETE FROM muleChars WHERE charId IN (" +
-					"SELECT charId FROM muleChars" +
-					"LEFT JOIN muleAccounts ON charAccountId = accountId" +
+					"SELECT charId FROM muleChars " +
+					"LEFT JOIN muleAccounts ON charAccountId = accountId " +
 					"WHERE charName = '" + info.charName + "' AND accountRealm = '" + realmId + "'" +
 				");"
 			);
