@@ -116,7 +116,7 @@ function findNextJob() {
 	return false;
 }
 
-function getJobs(removeFinished, ftjhandler) {
+function getJobs(removeFinished, ftjhandler, force, removeAcc) {
 	var writeFile, findChange, i, myJob, info, currentReq, readFile, exists, x,
 		ranDelay = Math.floor((Math.random() * 1500) + 1),
 		accountsInProgress = [];
@@ -157,8 +157,17 @@ function getJobs(removeFinished, ftjhandler) {
 
 			// Remove completed drops
 			if (!ftjhandler && removeFinished) {
-				if (currentReq.charName === removeFinished && currentReq.gameName.toLowerCase() === lastGameName) {
+				if (currentReq.charName === removeFinished && (currentReq.gameName.toLowerCase() === lastGameName || force)) {
 					print("\xFFc;Dropper \xFFc0:: Removed job for Char: " + removeFinished);
+					info.splice(i, 1);
+					i--;
+				}
+				continue;
+			}
+
+			if (!ftjhandler && removeAcc) {
+				if (currentReq.account === removeAcc) {
+					print("\xFFc;Dropper \xFFc0:: Removed job for Char: " + currentReq.charName);
 					info.splice(i, 1);
 					i--;
 				}
@@ -724,7 +733,7 @@ MainSwitch:
 
 				ItemDB.deleteAccount(nextJob);
 
-				while (!getJobs(nextJob.charName, false, true)) {
+				while (!getJobs(nextJob.charName, false, false, nextJob.account)) {
 					delay(100);
 				}
 	
