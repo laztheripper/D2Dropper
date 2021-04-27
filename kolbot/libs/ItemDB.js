@@ -285,6 +285,7 @@ var ItemDB = {
 		itam.image			= this.getImage(item);
 		itam.MD5 			= md5(item.description);
 		itam.description	= this.safeStrings(this.getItemDesc(item));
+		if (item.classid === 549) itam.MD5 = md5("ÿc4Right Click to Open\nÿc0ÿc4Horadric Cube");
 		
 		while(!this.DBConnect.execute("INSERT INTO " + this.DBTblItems + " VALUES ('" + this.ID.chara + "', '" + itam.fname + "', '" + item.itemType + "', '" + item.itemclass + "', '" + item.classid + "', '" + item.quality + "', '" + itam.flag + "', '" + itam.color + "', '" + itam.image + "', '" + itam.MD5 + "', '" + itam.description + "', '" + item.location + "', '" + item.x + "', '" + item.y + "');")) {
 			delay(500);

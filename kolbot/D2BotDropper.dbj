@@ -334,6 +334,7 @@ function DropIt() {
 
 		// get index of item to drop.
 		var checksum = md5(items[i].description);
+		if (items[i].classid === 549) checksum = md5("ÿc4Right Click to Open\nÿc0ÿc4Horadric Cube");
 
 		if (!checksum) {
             dropLog(dropName, "Failed to calculate checksum for " + items[i].name);
