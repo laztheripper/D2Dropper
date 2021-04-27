@@ -963,6 +963,28 @@ MainSwitch:
 			}
 		}
 
+		if (getLocation() !== 42) break;
+
+		if (!getControl(4, 626, 100, 151, 44)) { // Single player
+			ControlAction.click(6, 33, 572, 128, 35);
+			break;
+		}
+		
+		if (nextJob && getControl(4, 626, 100, 151, 44).getText().join("").toLowerCase() !== nextJob.realm.toLowerCase()) {
+			D2Bot.printToConsole("Wrong realm login, restarting...");
+			D2Bot.restart();
+			break;
+		}
+
+		ItemDB.deleteAccount(nextJob);
+
+		while (!getJobs(nextJob.charName, false, false, nextJob.account)) {
+			delay(100);
+		}
+
+		D2Bot.printToConsole("Deleted account: " + nextJob.account, 8);
+		D2Bot.restart();
+
 		break;
 	case 24: // Server Down - not much to do but wait..
 		break;
