@@ -154,20 +154,21 @@ function getJobs(removeFinished, ftjhandler, force, removeAcc) {
 				}
 				continue;
 			}
-
-			// Remove completed drops
-			if (!ftjhandler && removeFinished) {
-				if (currentReq.charName === removeFinished && (currentReq.gameName.toLowerCase() === lastGameName || force)) {
-					print("\xFFc;Dropper \xFFc0:: Removed job for Char: " + removeFinished);
+			
+			// Remove a char from an account we deleted
+			if (!ftjhandler && removeAcc) {
+				if (currentReq.account === removeAcc) {
+					print("\xFFc;Dropper \xFFc0:: Removed job for Account: " + currentReq.account);
 					info.splice(i, 1);
 					i--;
 				}
 				continue;
 			}
 
-			if (!ftjhandler && removeAcc) {
-				if (currentReq.account === removeAcc) {
-					print("\xFFc;Dropper \xFFc0:: Removed job for Char: " + currentReq.charName);
+			// Remove completed drops
+			if (!ftjhandler && removeFinished) {
+				if (currentReq.charName === removeFinished && (currentReq.gameName.toLowerCase() === lastGameName || force)) {
+					print("\xFFc;Dropper \xFFc0:: Removed job for Char: " + removeFinished);
 					info.splice(i, 1);
 					i--;
 				}
