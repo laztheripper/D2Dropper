@@ -272,6 +272,13 @@ function DropIt() {
 	}
 	delay((me.ping||0) * 2 + 200);
 
+	while (me.act !== 1) {
+		Town.goToTown(1);
+		if (getLocation() !== null) {
+			D2Bot.restart();
+		}
+	}
+
 	// Get items what we need to drop.
 	for (i = 0; i < jobs.length; i++) {
 		dropReq = JSON.parse(jobs[i]);
